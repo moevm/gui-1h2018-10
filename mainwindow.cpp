@@ -1,15 +1,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFileDialog>
 
-#include <QtGui>
-
-#include <QMessageBox>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    createConnection();
+
+    //Set number button group listener
+    ui->colorSelectGroup->connect(ui->colorSelectGroup, SIGNAL(buttonClicked(QAbstractButton*)),
+                             this, SLOT(colorSelectGroup_clicked(QAbstractButton*)));
+    //Set default brush size label
+    ui->brushSize_label->setText("5");
+    //Set default color to color indicator
+    ui->colorIndicator->setStyleSheet("background-color: black");
 }
 
 MainWindow::~MainWindow()
@@ -17,74 +22,96 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::createConnection()
+//============================================================
+//Color method
+//============================================================
+void MainWindow::colorSelectGroup_clicked(QAbstractButton* button)
 {
 
-    connect(ui->ouvrirAct, SIGNAL(triggered()), this, SLOT(ouvrir()));
+    QString buttonName = button->objectName();
 
-   // connect(ui->enregistrerAct, SIGNAL(triggered()), this, SLOT(enregistrer()));
+    //Default color - black
+    QColor selectedColor;
 
-   // connect(ui->fermerAct, SIGNAL(triggered()), this, SLOT(close()));
-
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    QMessageBox inf;
-
-    inf.setText("OPEN Pen");
-    inf.exec();
-}
-
-void MainWindow::on_action_triggered()
-{
-//    cacherParametre();
-//    fileName = QFileDialog::getOpenFileName(this, "Open file...", QString());
-
-//    if (!fileName.isEmpty()) {
-//        QImage image(fileName);
-//        image1=image;
-//        m_chemin=fileName;
-//        if (image1.isNull()) {
-//            QMessageBox::information(this, "MainWindow ",
-//                                     tr("Unable to open .").arg(fileName));
-//            return;
-//        }
-//        int fact=image1.depth()/8;
-//        im1=new TraiterImage(image1.height(),fact*image1.width());
-//        this->loadImage();
-//    }
-}
-
-void MainWindow::ouvrir()
-{
-//    cacherParametre();
-    fileName = QFileDialog::getOpenFileName(this, "Open file...", QString());
-
-    if (!fileName.isEmpty()) {
-        QImage image(fileName);
-        image1=image;
-        m_chemin=fileName;
-        if (image1.isNull()) {
-            QMessageBox::information(this, "MainWindow ",
-                                     tr("Unable to open .").arg(fileName));
-            return;
-        }
-        int fact=image1.depth()/8;
-        im1=new TraiterImage(image1.height(),fact*image1.width());
-        this->loadImage();
+    //Set color according to button name
+    if (buttonName == "color_red") {
+        selectedColor = Qt::red;
+        ui->colorIndicator->setStyleSheet("background-color: red");
     }
+    else {
+        //Default color - black
+        selectedColor = Qt::black;
+        ui->colorIndicator->setStyleSheet("background-color: black");
+    }
+    //Call appropriate method
+    ui->canvasWidget->setColor(selectedColor);
+
 }
-void MainWindow::loadImage()
+
+//============================================================
+//Slider methods
+//============================================================
+void MainWindow::on_brushSize_slider_sliderReleased()
 {
+    //Call appropriate method to set brush size
+    ui->canvasWidget->setBrushSize(ui->brushSize_slider->value());
+}
 
-    QSize size(ui->imageLabel->width(), ui->imageLabel->height());
-    QImage image2 = image1.scaled(size, Qt::KeepAspectRatio);
-//    ui->imageLabel->set;
-    QGraphicsScene *qwe = new QGraphicsScene(this);
-    qwe->addPixmap(QPixmap::fromImage(image2));
-    ui->imageLabel->setScene(qwe);
-            //ui->imageLabel->setPixmap(QPixmap::fromImage(image2));
+void MainWindow::on_brushSize_slider_sliderMoved(int position)
+{
+    ui->brushSize_label->setText(QString::number(position));
+}
+
+void MainWindow::on_brushSize_slider_valueChanged(int value)
+{
+    ui->brushSize_label->setText(QString::number(value));
+    ui->canvasWidget->setBrushSize(value);
+
+}
+
+//============================================================
+//Various methods
+//============================================================
+void MainWindow::on_clearAll_clicked()
+{
+    ui->canvasWidget->clearAll();
+}
+
+void MainWindow::on_color_custom_clicked()
+{
+    //Open custom color dialog
+    QColor customColor = QColorDialog::getColor(Qt::white, this, QString("Select a draw color"), QColorDialog::ShowAlphaChannel);
+    //Update indicator and brush
+    ui->colorIndicator->setStyleSheet("background-color: " + customColor.name());
+    ui->canvasWidget->setColor(customColor);
+}
 
 
+void MainWindow::on_save_triggered()
+{
+    QImage canvasImage = ui->canvasWidget->getImage();
+    //Get filename path (don't forget to add suffix at the end! .jpg for example)
+    QString filePath = QFileDialog::getSaveFileName(this, "SaveImage", "", "PNG (*.png);;JPEG (*.jpg *.jpeg)");
+    //Check if path is null
+    if (filePath == "") {
+        return;
+    }
+    //Save image
+    canvasImage.save(filePath);
+}
+
+void MainWindow::on_open_triggered()
+{
+    //Set up image
+    QString filepath = QFileDialog::getOpenFileName(
+                this,
+                tr("Open File"),
+                "",
+                tr("PNG (*.png)" )
+                );
+
+    if (filepath != "") {
+        QImage canvasImage = QImage(filepath);
+        ui->canvasWidget->setCanvasImage(canvasImage);
+    }
 }
