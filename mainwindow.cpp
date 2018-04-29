@@ -115,3 +115,18 @@ void MainWindow::on_open_triggered()
         ui->canvasWidget->setCanvasImage(canvasImage);
     }
 }
+
+void MainWindow::on_color_black_2_clicked()
+{
+    //QString buttonName = button->objectName();
+
+    //Default color - black
+    QColor selectedColor;
+
+    selectedColor = Qt::white;
+    ui->colorIndicator->setStyleSheet("background-color: white");
+
+
+    //Call appropriate method
+    ui->canvasWidget->setColor(selectedColor);
+}

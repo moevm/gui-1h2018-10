@@ -34,6 +34,10 @@ private slots:
 
     void on_open_triggered();
 
+    void on_color_black_2_clicked();
+
+    void on_color_white_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
