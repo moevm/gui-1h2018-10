@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>603</width>
-    <height>568</height>
+    <height>493</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -168,14 +168,14 @@ max-height: 20;
          <widget class="QPushButton" name="color_black_2">
           <property name="minimumSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -202,7 +202,7 @@ max-height: 20;
        </spacer>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch=""/>
       </item>
       <item>
        <spacer name="verticalSpacer_4">
@@ -383,16 +383,10 @@ max-width: 64;</string>
    <property name="text">
     <string>сохранить </string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
   </action>
   <action name="open">
    <property name="text">
     <string>открыть</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>
